@@ -1,60 +1,56 @@
 # BookSpace — Онлайн-бронирование жилья
 
-Полнофункциональная платформа для бронирования жилья: апартаменты, коттеджи, виллы, шале в 8 городах России.
+Полнофункциональная платформа для бронирования жилья: апартаменты, коттеджи, виллы и шале в 8 городах России.
 
 ## Стек технологий
 
 ### Фронтенд
-| Технология | Назначение |
-|---|---|
-| React 18 | Компонентная библиотека, хуки, Context API |
-| Babel Standalone | Транспиляция JSX прямо в браузере |
-| Context API (Zustand-style) | 4 глобальных стора: auth, cart, listing, notif |
-| CSS Variables | Дизайн-система «Midnight Indigo» |
-| OpenStreetMap | Карта объектов через iframe |
+| Технология | Версия | Назначение |
+|---|---|---|
+| React | 18.3.1 | Компонентная библиотека, хуки |
+| TypeScript | 5.4.5 | Статическая типизация |
+| Vite | 5.3.1 | Сборщик, HMR |
+| React Router | 6.23.1 | Маршрутизация, ProtectedRoute |
+| Zustand | 4.5.2 | Стейт-менеджмент |
+| Tailwind CSS | 3.4.4 | Утилитарные стили |
+| Axios | 1.7.2 | HTTP-клиент с интерцепторами |
 
 ### Бэкенд
-| Технология | Назначение |
-|---|---|
-| Node.js 22 | Серверная платформа |
-| Express 4.18 | HTTP-фреймворк, REST API |
-| jsonwebtoken | JWT-аутентификация |
-| uuid | Генерация UUID v4 |
-| cors | Кросс-доменные запросы |
+| Технология | Версия | Назначение |
+|---|---|---|
+| Node.js | 22.x | Серверная платформа |
+| Express | 4.21.0 | HTTP-фреймворк |
+| TypeScript | 5.6.2 | Типизация |
+| Prisma | 5.20.0 | ORM + миграции |
+| PostgreSQL | 15+ | База данных |
+| jsonwebtoken | 9.0.2 | JWT-аутентификация |
+| bcrypt | 5.1.1 | Хеширование паролей |
+| Zod | 3.23.8 | Валидация запросов |
+| Vitest | 2.1.1 | Тестирование |
 
 ## Архитектура
 
 ### Фронтенд — Feature-Sliced Design (FSD)
 ```
-src/
-├── app/          # StoreProvider, Router, 4 Context-стора
-├── pages/        # HomePage, ListingDetailPage, MapPage, FSDPage, AuthPage
-├── widgets/      # Header, ListingList, CartPanel, BookingForm
-├── features/     # auth, booking-crud, cart-checkout, search-filter
-├── entities/     # listing, booking, user, category, review
-└── shared/       # ui, api, config, lib
+frontend/src/
+├── app/          # Провайдеры, роутер, сторы
+├── pages/        # HomePage, ListingPage, ProfilePage, AuthPage, AdminPage
+├── widgets/      # Header, ListingList, BookingForm, CartPanel, SearchFilters
+├── features/     # auth, booking-crud, cart-checkout, search-filter, review-crud
+├── entities/     # listing, booking, user, category, review, notification
+└── shared/       # ui, api, lib, config
 ```
 
 ### Бэкенд — 3-слойная архитектура
 ```
 backend/src/
-├── routes/         # Маршрутизация API
-├── controllers/    # req/res → service
+├── routes/         # HTTP-маршруты
+├── controllers/    # req/res обработка
 ├── services/       # Бизнес-логика
-├── repositories/   # Работа с данными (→ Prisma)
-├── middleware/     # JWT + requireRole()
-└── lib/db.js       # Seed-данные (12 объектов)
+├── repositories/   # Работа с Prisma
+├── middleware/     # auth, validate, role
+└── schemas/        # Zod-схемы валидации
 ```
-
-## Возможности
-
-- 🏠 **12 объектов** в 8 городах (от 2 900 до 55 000 ₽/ночь)
-- 🛒 **Корзина** — добавление нескольких объектов, выбор дат, расчёт итога
-- 🗺️ **Карта** — OpenStreetMap + таблица координат + ссылка Google Maps
-- 🌲 **FSD-дерево** — интерактивная схема архитектуры
-- 🔐 **Авторизация** — JWT, роли USER / OWNER / ADMIN
-- 📋 **Бронирования** — создание, отмена, уведомления
-- ⭐ **Отзывы** — добавление и просмотр
 
 ## Запуск
 
@@ -62,12 +58,19 @@ backend/src/
 ```bash
 cd backend
 npm install
-node src/index.js
-# Сервер: http://localhost:3001
+cp .env.example .env
+npx prisma migrate dev
+npm run seed
+npm run dev
 ```
 
 ### Фронтенд
-Открыть `frontend/index.html` в браузере (или через Live Server).
+```bash
+cd frontend
+npm install
+cp .env.example .env
+npm run dev
+```
 
 ## Тестовые аккаунты
 
@@ -77,21 +80,14 @@ node src/index.js
 | owner@bookspace.ru | owner123 | OWNER |
 | user@bookspace.ru | user123 | USER |
 
-## API Эндпойнты
+## API
 
-```
-POST   /api/auth/register
-POST   /api/auth/login
-GET    /api/auth/me
-GET    /api/listings
-GET    /api/listings/:id
-POST   /api/bookings
-PATCH  /api/bookings/:id/cancel
-GET    /api/notifications
-GET    /api/categories
-GET    /api/admin/users     (ADMIN)
-```
+Документация: `http://localhost:3000/api/docs` (Swagger UI)
 
-## База данных
-
-Схема готова для Prisma + PostgreSQL (8 моделей, 5 enum-ов). Текущая реализация — in-memory для демонстрации.
+| Метод | URL | Описание |
+|---|---|---|
+| POST | /api/auth/register | Регистрация |
+| POST | /api/auth/login | Вход |
+| GET | /api/listings | Каталог объектов |
+| POST | /api/bookings | Создать бронь |
+| GET | /api/notifications | Уведомления |
