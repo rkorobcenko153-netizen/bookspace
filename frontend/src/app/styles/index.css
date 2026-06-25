@@ -1,0 +1,19 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #6366f1;
+  --color-surface: #0a0812;
+}
+
+body {
+  background-color: var(--color-surface);
+  color: #f0eeff;
+  font-family: "Inter", sans-serif;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #0a0812; }
+::-webkit-scrollbar-thumb { background: #1c1830; border-radius: 4px; }
