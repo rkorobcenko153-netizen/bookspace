@@ -1,0 +1,8 @@
+node_modules/
+*.log
+.env
+dist/
+*.pdf
+*.docx
+generate-report*.js
+report.docx
