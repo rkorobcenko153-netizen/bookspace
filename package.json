@@ -1,0 +1,15 @@
+{
+  "name": "bookspace",
+  "version": "1.0.0",
+  "description": "Онлайн-платформа бронирования жилья",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "build": "cd frontend && npm run build"
+  }
+}
